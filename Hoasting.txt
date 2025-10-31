@@ -1,0 +1,161 @@
+🧠 1️⃣ Pehle samajh: JavaScript ka execution 2 phase me hota hai
+
+ jab bhi JS koi function ya global code chalata hai,wo 2 phases me karta hai:
+
+    ✅ (1) Memory Creation Phase(Hoisting phase)
+
+    * sab variables aur functions ke liye memory allocate hoti hai
+    * JS engine variables aur functions ko scan karta hai
+    * “function declarations” ka pura body memory me chali jaati hai
+    * “variables” ke liye sirf undefined assign hota hai(agar var hai)
+    
+    ✅ (2) Execution Phase
+
+    * ab line by line code execute hota hai
+    * values assign hoti hain
+    * functions call hote hain
+    * expressions evaluate hote hain
+
+⚙️ 2️⃣ Ab samajh — Hoisting exactly kya hai?
+
+-> “Hoisting” ka matlab hai:
+* JS engine code run karne se pehle,variable aur function declarations ko memory me move kar leta hai (top pe) during compile time.
+* Isliye agar tu kisi variable ko use kare before declaration,to error nahi, undefined milta hai (agar var hai).
+
+🔍 3️⃣ Example 1: Basic hoisting with var
+
+    console.log(a); // ❓ kya output hoga?
+    var a = 10;
+
+    👉 Step by step:
+
+        1. Memory creation phase:
+            -> JS engine dekhta hai var a
+            -> memory me a: undefined store hota hai
+
+       2.  Execution phase:
+
+        -> line 1: print karega undefined (kyunki value abhi assign nahi hui)
+        -> line 3: ab a ko assign karta hai 10
+        ✅ Output: undefined
+
+
+🔍 4️⃣ Example 2: Let / Const ke saath Hoisting kaise alag hai
+
+    console.log(a); // ❌ ReferenceError
+    let a = 10;
+
+    Explain:-
+    -> Let aur const bhi hoist hote hain par difference ye hai → wo temporal dead zone (TDZ) me rehte hain jab tak unhe assign nahi kiya jata.
+    -> “TDZ” = time between hoisting and initialization.Us time me unko access karne par error aata hai.
+
+🔍 5️⃣ Example 3: Function Declaration vs Function Expression
+
+   * Function Declaration
+
+        sayHi(); // ✅ Works
+
+        function sayHi() {
+        console.log('Hello Bhai!');
+        }
+
+        Explain:-
+            Function Declaration poora memory me chala jaata hai (pura body ke saath) Isliye use pehle call karne pe bhi chalega.
+
+    * Function Expression
+
+    sayHi(); // ❌ TypeError
+
+    var sayHi = function() {
+        console.log('Hello Bhai!');
+    };
+
+    Explain:-
+       Ye function expression hai — aur var ke sath declare hua hai.
+
+        * memory phase me sayHi = undefined
+        * jab tak line 3 execute nahi hoti,sayHi ek “undefined” hai, callable nahi.
+
+🔍 6️⃣ Example 4: Under the hood — how memory and execution context banta hai
+
+    var a = 10;
+
+    function test() {
+        var b = 20;
+        console.log(a, b);
+    }
+    test();
+
+    Step 1: Global Execution Context (GEC)
+        Jab program start hota hai →
+       -> JS ek Global Execution Context banata hai, jisme do cheeze hoti hain:
+
+      1.1 Memory phase (creation):
+
+        a: undefined
+        test: ƒ test()
+
+      1.2 Execution phase:
+
+        a = 10
+        test() call → new Function Execution Context (FEC) banta hai.
+
+    Step 2: Function Execution Context (for test)
+
+        Ab test() call hone pe JS ek naya context stack pe push karta hai.
+
+        2.1 Memory phase:
+
+            b: undefined
+
+        2.2 Execution phase:
+
+        b = 20
+        console.log(a, b) // lexical scope ke through a=10 milta hai
+
+        explain:-
+            🔁 jab function complete hota hai,
+            wo context stack se pop ho jata hai.
+
+
+🧩 7️⃣ Under the Hood Summary (ek visual jaisa soch)
+
+    console.log(x);
+    var x = 5;
+    function greet() { console.log('Hello'); }
+    greet();    
+
+    1. Memory Creation Phase:
+
+        x -> undefined
+        greet -> ƒ greet()
+
+    2. Execution Phase:
+
+    console.log(x) // undefined
+    x = 5
+    greet() // "Hello"
+
+
+⚡ 8️⃣ Bonus: Arrow functions aur Hoisting
+
+    greet(); // ❌ Cannot access 'greet' before initialization
+    const greet = () => console.log("Yo!");
+
+    Arrow functions bhi expressions hote hain,to ye bhi hoist hote hain par TDZ me rehte hain (tab tak use nahi kar sakte jab tak initialized na ho jaaye).
+
+
+🧨 Final Recap (tera style me bhai 💬)
+
+🔸 Hoisting = JS engine pehle se variables/functions ki jagah reserve kar leta hai
+🔸 var → undefined assign hota hai
+🔸 let/const → hoist hote hain, par TDZ me rehte hain (error before use)
+🔸 Function declaration puri memory me chali jaati hai (pehle se available hoti hai)
+🔸 Execution time tab lagta hai jab values assign ya functions run karte ho
+🔸 Hoisting compile time (creation phase) me hoti hai, run time me nahi
+
+
+
+
+
+
