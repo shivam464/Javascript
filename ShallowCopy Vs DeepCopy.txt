@@ -1,0 +1,128 @@
+🧩 Pehle samajh — Copy ka matlab kya?
+
+   -> Agar tumhare paas ek object hai:
+
+   let user = {
+        name: "Rahul",
+        address: {
+            city: "Delhi",
+        },
+    };
+
+    Aur tum likhte ho
+
+    let newUser = user;
+
+    explain:- 
+      *  ⚠️ Ye copy nahi hai — ye reference assign ho gaya.
+      *  Matlab user aur newUser dono same memory location ko point kar rahe hain.
+
+      To agar tum change karoge:
+
+      newUser.name = "Rohit";
+
+      To user.name bhi "Rohit" ho jayega — kyunki dono ek hi object ko refer kar rahe hain.
+
+
+1. 🧂 Shallow Copy kya hoti hai?
+
+    * Shallow copy matlab — sirf 1st level ke data ki copy banti hai, andar ke nested objects ka reference copy hota hai.
+
+    let user = {
+        name: "Rahul",
+        address: {
+            city: "Delhi",
+        },
+    };
+
+    let copy = { ...user }; // Shallow copy
+
+    then 
+
+    copy.name = "Rohit";
+    console.log(user.name); // "Rahul" ✅ (safe)
+
+    copy.address.city = "Mumbai";
+    console.log(user.address.city); // "Mumbai" ⚠️ (bad)
+
+    explain:-
+    👉 Kyunki address ek nested object hai, uska reference copy hua hai, naya object nahi bana.
+
+    🧠 Shallow copy methods:
+
+        * Object.assign({}, obj)
+
+        * Spread operator { ...obj }
+
+        * Array ke liye [...arr] ya arr.slice()
+
+
+2.💎 Deep Copy kya hoti hai?
+
+   *  Deep copy matlab — pure object ke andar ke sabhi nested level tak ek naya copy banta hai.Koi bhi reference shared nahi hota.
+
+   let user = {
+        name: "Rahul",
+        address: {
+            city: "Delhi",
+        },
+    };
+
+    let deepCopy = JSON.parse(JSON.stringify(user));
+
+    then 
+
+    deepCopy.address.city = "Mumbai";
+    console.log(user.address.city); // "Delhi" ✅ (safe)
+
+    * ⚠️ Lekin JSON method ka ek limitation hai:
+
+    -> Function, undefined, Date, Map, Set, Symbol lose ho jate hain.
+
+    -> Circular reference handle nahi karta.
+
+
+    
+    
+    
+* 💪 Apna khud ka Deep Copy function kaise banaye?
+
+    function deepCopy(obj) {
+        // primitive values (string, number, boolean, null, undefined)
+        if (obj === null || typeof obj !== "object") {
+            return obj;
+        }
+
+        // Array check
+        if (Array.isArray(obj)) {
+            let newArr = [];
+            for (let i = 0; i < obj.length; i++) {
+            newArr[i] = deepCopy(obj[i]);
+            }
+            return newArr;
+        }
+
+        // Object check
+        let newObj = {};
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+            newObj[key] = deepCopy(obj[key]);
+            }
+        }
+        return newObj;
+    }
+
+    let user = {
+        name: "Rahul",
+        address: { city: "Delhi" },
+        hobbies: ["cricket", "coding"],
+    };
+
+    let copy = deepCopy(user);
+    copy.address.city = "Mumbai";
+
+    console.log(user.address.city); // Delhi ✅
+
+
+
+
