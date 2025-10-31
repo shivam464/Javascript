@@ -1,0 +1,118 @@
+Debouncing aur Throttling dono hi performance optimization techniques hain — mainly use hoti hain jab koi function bohot frequently call ho raha ho (like on scroll, resize, input typing, mouse move etc.), taaki browser ya app lag na kare.
+
+🔹 Problem samjho pehle
+
+    * Jab hum events jaise scroll,resize,keyup,mousemove pe listener lagate hain — to ye event bohot baar fire hota hai (per millisecond me 20-30 baar tak).
+   
+    * Agar har baar tumhara function chalega, to performance degrade hoti hai — lag, unnecessary re-renders, ya API spam call hone lagta hai.
+
+👉 Is problem ko solve karne ke liye laaya gaya Debouncing aur Throttling.
+
+1. 🔸 DEBOUNCING (Wait until user stops)
+
+    * Jab tak user baar-baar trigger kar raha hai, function ko mat chalao. Jab wo ruk jaaye kuch time ke liye, tab ek hi baar chalao.
+
+    * Matlab last trigger ke baad agar XXXX millisecond tak koi new trigger nahi aaya, tab hi function chalega.
+    
+    ⚙️ Example:
+
+    * Socho tum search box me likh rahe ho “apple” Har keypress pe API call nahi chahiye,Tum chahte ho user likhna complete kare, tab ek hi baar search call ho.
+
+        function debounce(fn, delay) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer); // purana timer cancel
+                timer = setTimeout(() => {
+                fn.apply(this, args);
+                }, delay);
+            };
+        }
+
+        function fetchResults(query) {
+             console.log("API call for:", query);
+        }
+
+        const handleInput = debounce(fetchResults, 500);
+
+        // Example: typing
+
+        document.getElementById("search").addEventListener("keyup", (e) => {
+             handleInput(e.target.value);
+        });
+
+        explain:- 
+            Agar user tezi se likhta hai “a”, “ap”, “app”… to har baar timer reset hoga,aur jab wo likhna band kare 500ms ke liye, tabhi ek baar fetchResults() chalega.
+        
+        ✅ Use case:
+
+        * Search bar
+
+        * Auto-save
+
+        * Resize event ke baad layout calculate karna
+
+
+
+
+
+
+
+
+
+
+2.🔸 THROTTLING (Run at fixed intervals)
+
+
+     * Har XXX millisecond me sirf ek baar function chale, chahe event kitni bhi baar trigger ho jaaye.
+     * Matlab agar scroll event 100 baar hua 1 sec me, aur throttle 500ms ka hai,to function sirf 2 baar hi chalega.
+
+     ⚙️ Example:
+
+     -> Scroll pe API call ya animation performance improve karne ke liye:
+
+    function throttle(fn, limit) {
+        let inThrottle = false;
+        return function(...args) {
+            if (!inThrottle) {
+            fn.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => (inThrottle = false), limit);
+            }
+        };
+    }
+
+    function handleScroll() {
+     console.log("Scroll position:", window.scrollY);
+    }
+
+    window.addEventListener("scroll", throttle(handleScroll, 1000));
+
+    explain:- 
+        🕒 Ab agar tum scroll karte jaoge continuous, to ye handleScroll har 1 second me sirf ek baar chalega.
+
+    ✅ Use case:
+
+    * Scroll event optimization
+
+    * Window resize
+
+    * Mouse move tracking
+
+    * Button spam prevention (rate limit)
+
+
+| Feature          | Debounce                                    | Throttle                                       |
+| ---------------- | ------------------------------------------- | ---------------------------------------------- |
+| Trigger timing   | Waits until no event happens for given time | Executes at regular intervals                  |
+| Use when         | User stops doing action (like typing)       | Action continuously happening (like scrolling) |
+| Example          | Search input, Auto-save                     | Scroll listener, Button clicks                 |
+| Output frequency | 1 time after pause                          | Fixed interval  
+
+
+    Agar simple language me bolo to 👇
+
+   * Debounce = “ruk ke soch ke ek baar kar”
+
+   * Throttle = “kitni bhi baar bolo, main har X sec me ek hi baar karunga”                               |
+
+
