@@ -1,0 +1,207 @@
+Higher order components/ Higher order function
+
+key points :
+
+✔ Higher-Order Component (HOC)
+✔ Higher-Order Function (HOF)
+✔ Why they were introduced
+✔ What problem they solve
+✔ Advantages & disadvantages
+✔ When to use / when NOT to use
+✔ Real-world React examples
+
+
+
+✅ 1. What is a Higher-Order Function (HOF)?
+ans:- 
+A Higher-Order Function is a function that either:
+
+    -> takes another function as an argument, or
+
+    -> returns a new function
+
+JavaScript supports functional programming, so HOFs help create reusable logic.
+
+Example:-
+
+function withLogging(fn) {
+  return function (...args) {
+    console.log("Function called with", args);
+    return fn(...args);
+  };
+}
+
+function add(a, b) {
+  return a + b;
+}
+
+const loggedAdd = withLogging(add);
+loggedAdd(5, 10);
+
+
+
+* Real-world use
+
+1. Array functions: map, filter, reduce
+
+2. Middleware systems
+
+3. Debounce / throttle
+
+4. Auth logic wrapper
+
+
+
+
+✅ 2. What is a Higher-Order Component (HOC)?
+ans:- 
+
+A Higher-Order Component is a function that takes a component and returns a new enhanced component.
+
+    ✔ It adds extra logic
+    ✔ Without modifying the original component
+    ✔ Helps reuse behavior
+    ✔ Pattern used before hooks existed
+
+
+
+❓ Why HOCs were introduced?
+
+Before React Hooks existed (React < 16.8), developers needed a way to:
+✓ Reuse component logic
+
+🎯 3. What problems HOCs solve?
+
+    Problem 1: Repeated logic
+
+        Example: every screen needs "check if user is logged in".
+
+        -> Without HOC → logic repeats in every component
+        -> With HOC → logic written once, reused everywhere
+
+    Problem 2: Complex components
+
+        -> HOCs separate business logic from UI rendering, keeping UI clean.
+
+
+
+
+    🎁 4. Real-world Higher-Order Component Examples
+
+        Example 1: Authentication wrapper
+        solution:- 
+
+        HOC: withAuth
+
+
+        import { useEffect } from "react";
+        import { useNavigation } from "@react-navigation/native";
+
+        function withAuth(WrappedComponent) {
+        return function (props) {
+            const navigation = useNavigation();
+            const isLoggedIn = true; // Example
+
+            useEffect(() => {
+            if (!isLoggedIn) {
+                navigation.navigate("LoginScreen");
+            }
+            }, []);
+
+            return <WrappedComponent {...props} />;
+        };
+        }
+
+        export default withAuth;
+
+
+        use:- 
+
+        const HomeScreen = () => <Text>Home</Text>;
+
+        export default withAuth(HomeScreen);
+
+
+
+
+
+
+        Example 2: API data loading HOC
+
+        function withApiData(WrappedComponent, url) {
+        return function () {
+            const [data, setData] = useState(null);
+
+            useEffect(() => {
+            fetch(url)
+                .then((res) => res.json())
+                .then(setData);
+            }, []);
+
+            return <WrappedComponent data={data} />;
+        };
+        }
+
+
+        usage:- 
+        
+
+        const ProductList = ({ data }) => (
+        <FlatList data={data} renderItem={({ item }) => <Text>{item.name}</Text>} />
+        );
+
+        export default withApiData(ProductList, "https://api/products");
+
+
+🚀 5. Advantages of HOCs
+
+    1. Reusable logic
+
+    Write once, use anywhere.
+
+    2. Cleaner UI components
+
+    UI stays focused on UI.
+
+    3. Enhances components
+
+    Add additional props or behavior without changing the component.
+
+    4. Composability
+
+    Multiple HOCs can be chained:
+
+
+⚠️ 6. Disadvantages of HOCs
+
+    1. Wrapper hell (too many nested components)
+
+    Debugging becomes harder.
+
+    2. Name conflict
+
+    Extra props injected by HOC may conflict with existing ones.
+
+    3. Harder to follow code
+
+    Logic is separated, beginners get confused.
+
+    4. Performance issues
+
+    Too many wrappers → extra renders.
+
+
+
+    ❌ 1. Extra component layers
+
+    More wrappers → deeper component tree → more work for React.
+
+    ❌ 2. Extra re-renders
+
+    If HOC has state/effect → child re-renders unnecessarily.
+
+    ❌ 3. Prop injecting → new props every render
+
+    HOC often adds injected props, causing the wrapped component to re-render.
+
+
