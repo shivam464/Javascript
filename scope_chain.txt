@@ -1,0 +1,17 @@
+
+
+Q1- When a variable is accessed, JavaScript follows a specific process:
+
+Ans:-
+   . Starts Locally: The engine first looks for the variable in the current, innermost scope (e.g., within the function or block where it is used).
+
+   . Moves Outward: If the variable is not found in the current scope, the engine moves up to the immediate parent (outer) scope and continues the search.
+
+   . Continues to Global Scope: This process repeats, traversing up the chain of nested scopes until it reaches the global scope.
+
+   . Throws an Error: If the variable is still not found in the global scope, a ReferenceError is thrown, indicating the variable is not defined.
+
+
+
+
+--------------------------------------END-------------------------------------------------------------------------
