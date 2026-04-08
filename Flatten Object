@@ -1,0 +1,91 @@
+function flattenObject(obj, parentKey = "", result = {}) {
+  for (let key in obj) {
+    const newKey = parentKey ? `${parentKey}.${key}` : key;
+
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      flattenObject(obj[key], newKey, result);
+    } else {
+      result[newKey] = obj[key];
+    }
+  }
+
+  return result;
+}
+
+const obj = {
+  name: "Shivam",
+  skills: ["JS", "React"],
+  address: {
+    city: "Noida"
+  }
+};
+
+console.log(flattenObject(obj));
+
+// result:
+
+{
+  "name": "Shivam",
+  "skills.0": "JS",
+  "skills.1": "React",
+  "address.city": "Noida"
+}
+
+flatten object with custom key :
+
+
+function flattenObject(obj, parentKey = "", result = {}) {
+  for (let key in obj) {
+    const value = obj[key];
+
+    // Handle Arrays
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        const newKey = `${key}_${item}`;
+        result[newKey] = item;
+      });
+    }
+
+    // Handle Objects
+    else if (typeof value === "object" && value !== null) {
+      const newKey = parentKey ? `${parentKey}.${key}` : key;
+      flattenObject(value, newKey, result);
+    }
+
+    // Handle Primitive Values
+    else {
+      const newKey = parentKey ? `${parentKey}.${key}` : key;
+      result[newKey] = value;
+    }
+  }
+
+  return result;
+}
+
+const obj = {
+  name: "Shivam",
+  skills: ["JS", "React"],
+  address: {
+    city: "Noida"
+  }
+};
+
+console.log(flattenObject(obj));
+
+result: 
+
+{
+  name: "Shivam",
+  skills_JS: "JS",
+  skills_React: "React",
+  "address.city": "Noida"
+}
+
+
+
+
+
+
+
+
+
